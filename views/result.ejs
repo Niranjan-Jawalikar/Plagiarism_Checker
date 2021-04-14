@@ -1,0 +1,57 @@
+<%- include("./partials/header")%>
+<h1><%=comment%></h1>
+<% if(match){%>
+<%matchedPercentage.forEach(item=>{%>
+<h1><%=item.fileName%></h1>
+<h2><%=item.percentage%></h2>
+<%})%>
+<%let displayed=false%>
+    <% textArr.forEach((text,i)=>{%>
+        <% text.forEach((line,index)=>{matchedObjects[i].forEach(obj=>{%>
+                       <% if(index>=obj.startIndex && index<=obj.endIndex){%>
+                          <span style="color: <%=obj.color%>;">
+                            <% if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                <% [0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
+                                      <% if(el.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                        <%=el%>
+                                      <%}else{%>
+                                         <%-el%>
+                                        <%}%>
+                
+                                            <%})%>
+                                                <%}else{%>
+                                                    <%- line %>
+                                                    <%}%>
+                                      <% displayed=true%>
+                          </span>
+                          <%}%>
+           <%})%>
+
+                        <%if(!displayed){%>
+                         <span>
+                            <% if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                <% [0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
+                                      <% if(el.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                        <%=el%>
+                                      <%}else{%>
+                                         <%-el%>
+                                        <%}%>
+                
+                                            <%})%>
+                                                <%}else{%>
+                                                    <%- line %>
+                                                    <%}%>
+        
+                         </span>
+                       <%}%>
+                          <%displayed=false%>
+            
+                                        <br>
+                                        <%})%>
+
+
+                                            <%})%>
+                                            <%}else{%>
+                                               <h1>No matches found!</h1>
+                                            <%}%>
+                                                <%- include("./partials/footer")%>

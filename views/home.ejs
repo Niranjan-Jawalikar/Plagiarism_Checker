@@ -1,0 +1,21 @@
+<%- include("./partials/header")%>
+    <%if(error.length>0){%>
+        <%=error%>
+            <%}%>
+                <form action="/" method="POST" enctype="multipart/form-data">
+                    <label for="lang">Select language:</label>
+                    <select name="language" id="lang">
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="js">JavaScrpit</option>
+                        <option value="py">Python</option>
+                        <option value="cs">C#</option>
+                    </select>
+                    <label for="comment">Enter Comment:</label>
+                    <input type="text" id="comment" name="comment">
+                    <label for="file">Upload Files:</label>
+                    <input type="file" id="file" name="files" multiple required>
+                    <button>Submit</button>
+                </form>
+                <%- include("./partials/footer")%>
