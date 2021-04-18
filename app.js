@@ -1,11 +1,18 @@
-const express = require("express");
-const app = express();
-const path = require("path");
-const mongoose = require('mongoose');
+const express = require("express"),
+    app = express(),
+    path = require("path"),
+    mongoose = require('mongoose'),
+    session = require("express-session"),
+    flash = require("connect-flash"),
+    bodyParser = require("body-parser"),
+    passport = require("passport"),
+    LocalStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose")
+
+
 mongoose.connect('mongodb://localhost/Plagiarism_Checker', { useNewUrlParser: true, useUnifiedTopology: true });
-const session = require("express-session");
-const flash = require("connect-flash");
-const bodyParser = require("body-parser");
+
+
 app.use(session({
     secret: "secret",
     resave: false,
@@ -13,11 +20,16 @@ app.use(session({
 }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
+    res.locals.currentUser = req.user;
+    res.locals.currentPage = null;
     next();
 })
+
 
 
 
@@ -25,10 +37,12 @@ app.use(express.static(path.join(__dirname, "public")))
 app.set("view engine", "ejs")
 
 
-const indexRoutes = require("./routes");
+const indexRoutes = require("./routes/results"),
+    authRoutes = require("./routes/auth");
 
 
 app.use("/", indexRoutes);
+app.use("/", authRoutes);
 
 
 

@@ -1,0 +1,16 @@
+<%- include("../partials/header")%>
+    <div class="container">
+        <%if(urls.length>0){%>
+            <%urls.forEach(url=>{%>
+                <div class="list-group">
+                    <a href="/result/<%=url._id%>" class="list-group-item list-group-item-action">
+                        <%=url.comment%>
+                    </a>
+                </div>
+                <%})%>
+                    <%}else{%>
+                        <p>No results found!</p>
+                        <%}%>
+    </div>
+
+    <%- include("../partials/footer")%>

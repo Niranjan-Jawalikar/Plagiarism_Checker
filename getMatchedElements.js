@@ -3,13 +3,18 @@ const cheerio = require("cheerio");
 const { fetchMossUrl, client } = require("./Moss");
 const puppeteer = require("puppeteer");
 
-const getMatchedElements = async (foundURL) => {
+const getMatchedElements = async (foundURLObj) => {
     return new Promise(async (resolve, reject) => {
-        // const url = await fetchMossUrl(client, foundURL);
-        // foundURL.url = url;
-        // await foundURL.save()
+        let url;
+        if (!foundURLObj.url) {
+            url = await fetchMossUrl(client, foundURLObj);
+            foundURLObj.url = url;
+            await foundURLObj.save()
+        }
+        else
+            url = foundURLObj.url;
         // "http://moss.stanford.edu/results/3/4901221730198/"
-        const response = await axios.get("http://moss.stanford.edu/results/3/4901221730198/");
+        const response = await axios.get(url);
         let $ = cheerio.load(response.data);
         const browser = await puppeteer.launch();
         const page = await browser.newPage();

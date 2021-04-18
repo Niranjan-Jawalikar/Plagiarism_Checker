@@ -1,13 +1,18 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const URLSchema = new Schema({
+const urlSchema = new Schema({
     url: {
         type: String,
+        set: el => el.trimRight()
     },
     language: String,
-    comment: String
+    comment: String,
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }
 
 })
 
-module.exports = mongoose.model("URL", URLSchema);
+module.exports = mongoose.model("URL", urlSchema);

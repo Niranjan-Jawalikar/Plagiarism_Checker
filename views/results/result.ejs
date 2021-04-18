@@ -1,18 +1,19 @@
-<%- include("./partials/header")%>
-<h1><%=comment%></h1>
-<% if(match){%>
-<%matchedPercentage.forEach(item=>{%>
-<h1><%=item.fileName%></h1>
-<h2><%=item.percentage%></h2>
-<%})%>
+<%- include("../partials/header")%>
+<div class="conatiner-fluid result">
+<h1 class="text-center comment-header"><%=comment%></h1>
+<%if(match){%>
 <%let displayed=false%>
-    <% textArr.forEach((text,i)=>{%>
-        <% text.forEach((line,index)=>{matchedObjects[i].forEach(obj=>{%>
+    <div id="content">
+    <%textArr.forEach((text,i)=>{%>
+      <div id="code-<%=i%>">
+        <h1 class="file-name"><%=matchedPercentage[i].fileName%></h1>
+        <h2 class="percentage"><%=matchedPercentage[i].percentage%></h2>  
+        <%text.forEach((line,index)=>{matchedObjects[i].forEach(obj=>{%>
                        <% if(index>=obj.startIndex && index<=obj.endIndex){%>
                           <span style="color: <%=obj.color%>;">
-                            <% if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
-                                <% [0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
-                                      <% if(el.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                            <%if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                <%[0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
+                                      <%if(el.match(/((?<=#include\s*?))?<.+?>/g)){%>
                                         <%=el%>
                                       <%}else{%>
                                          <%-el%>
@@ -20,17 +21,17 @@
                 
                                             <%})%>
                                                 <%}else{%>
-                                                    <%- line %>
+                                                    <%-line%>
                                                     <%}%>
-                                      <% displayed=true%>
+                                      <%displayed=true%>
                           </span>
                           <%}%>
            <%})%>
 
                         <%if(!displayed){%>
                          <span>
-                            <% if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
-                                <% [0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
+                            <%if (line.match(/((?<=#include\s*?))?<.+?>/g)){%>
+                                <%[0,...line.match(/((?<=#include\s*?))?<.+?>/g).map(el=>line.indexOf(el))].map((el,i,arr)=> line.slice(el,arr[i+1])).forEach(el=>{%>
                                       <% if(el.match(/((?<=#include\s*?))?<.+?>/g)){%>
                                         <%=el%>
                                       <%}else{%>
@@ -39,7 +40,7 @@
                 
                                             <%})%>
                                                 <%}else{%>
-                                                    <%- line %>
+                                                    <%-line%>
                                                     <%}%>
         
                          </span>
@@ -49,9 +50,13 @@
                                         <br>
                                         <%})%>
 
-
+      </div>
                                             <%})%>
+                                   
+       
+                                          </div>
                                             <%}else{%>
                                                <h1>No matches found!</h1>
                                             <%}%>
-                                                <%- include("./partials/footer")%>
+                                          </div>
+                                                <%- include("../partials/footer")%>
