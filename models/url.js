@@ -8,6 +8,12 @@ const urlSchema = new Schema({
     },
     language: String,
     comment: String,
+    searchTerm: String,
+    sources: [{
+        url: String,
+        percentage: String,
+        userFileName: String
+    }],
     userId: {
         type: Schema.Types.ObjectId,
         ref: "User"

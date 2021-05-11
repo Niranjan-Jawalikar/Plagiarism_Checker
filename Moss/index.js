@@ -2,7 +2,8 @@ const MossClient = require("moss-node-client");
 let client;
 const fs = require("fs");
 const path = require("path");
-const dirPath = path.join(__dirname, "..", "uploads")
+const dirPathUploads = path.join(__dirname, "..", "uploads")
+const dirPathGoogle = path.join(__dirname, "..", "google");
 const fse = require("fs-extra");
 
 
@@ -22,23 +23,44 @@ const getAllDirFiles = function (dirPath, arrayOfFiles) {
     return arrayOfFiles
 }
 
+const processMossClient = async (client) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const url = await client.process();
+            resolve(url);
+        }
+        catch (e) {
+            console.log(e);
+            reject(e);
+        }
+    })
+
+}
+
 const fetchMossUrl = async (client, { language, comment }) => {
+    const urlArray = [];
     client = new MossClient(language, "221511228");
     client.setComment(comment);
-    getAllDirFiles(dirPath).forEach(file => {
-        client.addFile(`${dirPath}/${file}`, `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}`)//description without space
+    getAllDirFiles(dirPathUploads).forEach(file => {
+        client.addFile(`${dirPathUploads}/${file}`, `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}`)//description without space
     });
+    urlArray.push([await processMossClient(client)]);
+    let arr = [];
+    for (file of getAllDirFiles(dirPathUploads)) {
+        arr = [];
+        for (fileOfGoogle of getAllDirFiles(dirPathGoogle)) {
+            client = new MossClient(language, "221511228");
+            client.setComment(comment);
+            client.addFile(`${dirPathUploads}/${file}`, `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}`);
+            client.addFile(`${dirPathGoogle}/${fileOfGoogle}`, `${fileOfGoogle}`)
+            arr.push({ url: await processMossClient(client), userFileName: `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}` });
+        }
+        urlArray.push(arr);
+    }
+    fse.emptyDirSync(dirPathUploads);
+    fse.emptyDirSync(dirPathGoogle);
+    return urlArray;
 
-    try {
-        const url = await client.process();
-        return url;
-    }
-    catch (e) {
-        console.log(e);
-    }
-    finally {
-        fse.emptyDirSync(dirPath)
-    }
 }
 
 

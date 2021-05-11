@@ -1,11 +1,16 @@
-const express = require("express")
-const router = express.Router();
-const getMatchedElements = require("../getMatchedElements");
-const multer = require("multer");
-const upload = require("../Multer");
-const URL = require("../models/url");
-const { isLoggedIn } = require("../middleware");
-const User = require("../models/user");
+const express = require("express"),
+    router = express.Router(),
+    getMatchedElements = require("../getMatchedElements"),
+    multer = require("multer"),
+    upload = require("../Multer"),
+    URL = require("../models/url"),
+    { isLoggedIn } = require("../middleware"),
+    User = require("../models/user"),
+    getSource = require("../api"),
+    path = require("path"),
+    dirPathUploads = path.join(__dirname, "..", "uploads"),
+    dirPathGoogle = path.join(__dirname, "..", "google");
+fse = require("fs-extra");
 
 router.get("/", (req, res) => {
     res.render("home");
@@ -25,11 +30,11 @@ router.post("/", isLoggedIn, async (req, res) => {
             req.flash("error", err)
             return res.redirect("back");
         }
-        const urlObj = await URL.create({ language: req.body.language, comment: req.body.comment, userId: req.user._id })
+        const { language, comment, searchTerm } = req.body;
+        const urlObj = await URL.create({ language, comment, userId: req.user._id, searchTerm })
         const user = await User.findById(req.user._id).exec();
         user.urls.push(urlObj._id);
         await user.save();
-        res.locals.currentPage = "result";
         res.redirect(`/result/${urlObj._id}`);
     })
 })
@@ -40,7 +45,7 @@ router.get("/result", isLoggedIn, async (req, res) => {
 })
 
 router.get("/result/:id", isLoggedIn, async (req, res) => {
-    let foundURLObj;
+    let foundURLObj, sourceArray;
     try {
         foundURLObj = await URL.findById(req.params.id).exec();
     }
@@ -56,8 +61,21 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
         req.flash("error", "Unauthorized user");
         return res.redirect("back");
     }
+    if (!foundURLObj.url) {
+        try {
+            const { searchTerm, language } = foundURLObj;
+            sourceArray = await getSource(searchTerm, language);
+        }
+        catch (e) {
+            console.log(e);
+            req.flash("error", "Something went wrong.Please Try Again!");
+            fse.emptyDirSync(dirPathUploads);
+            fse.emptyDirSync(dirPathGoogle);
+            return res.redirect("back");
+        }
+    }
     try {
-        const resulfOfMatchedElements = await getMatchedElements(foundURLObj);
+        const resulfOfMatchedElements = await getMatchedElements(foundURLObj, sourceArray);
         return res.render("results/result", resulfOfMatchedElements);
     }
     catch (resulfOfMatchedElements) {
@@ -65,5 +83,10 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
     }
 })
 
+router.get("/demo", async (req, res) => {
+    //cx=bf86f70809529d285
+    //api_key=AIzaSyD3fJCcq8cFglnxF7kZTQ5hY46eL5FL8iQ
+    getSource();
+})
 
 module.exports = router;

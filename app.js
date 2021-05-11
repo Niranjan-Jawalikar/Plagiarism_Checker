@@ -5,9 +5,7 @@ const express = require("express"),
     session = require("express-session"),
     flash = require("connect-flash"),
     bodyParser = require("body-parser"),
-    passport = require("passport"),
-    LocalStrategy = require("passport-local"),
-    passportLocalMongoose = require("passport-local-mongoose")
+    passport = require("passport");
 
 
 mongoose.connect('mongodb://localhost/Plagiarism_Checker', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -26,7 +24,6 @@ app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
     res.locals.currentUser = req.user;
-    res.locals.currentPage = null;
     next();
 })
 
