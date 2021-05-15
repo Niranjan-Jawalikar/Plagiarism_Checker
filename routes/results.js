@@ -79,7 +79,10 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
         return res.render("results/result", resulfOfMatchedElements);
     }
     catch (resulfOfMatchedElements) {
-        return res.render("results/result", resulfOfMatchedElements);
+        if (resulfOfMatchedElements)
+            return res.render("results/result", resulfOfMatchedElements);
+        req.flash("error", "Something went wrong.Please Try Again!");
+        return res.redirect("back");
     }
 })
 

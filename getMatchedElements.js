@@ -1,6 +1,6 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { fetchMossUrl, client } = require("./Moss");
+const { fetchMossUrl } = require("./Moss");
 const puppeteer = require("puppeteer");
 
 const getMatchedPercentage = ($) => {
@@ -22,14 +22,16 @@ const getMatchedElements = async (foundURLObj, sourceArray) => {
     return new Promise(async (resolve, reject) => {
         let fileUrl;
         if (!foundURLObj.url) {
-            url = await fetchMossUrl(client, foundURLObj);
+            url = await fetchMossUrl(foundURLObj);
+            if (!url)
+                reject(null);
             fileUrl = url[0][0];
             foundURLObj.url = url[0][0];
             const matchedPercentageArray = [];
             let arr = [];
             for (let i = 1; i < url.length; i++) {
                 arr = [];
-                for (sourceUrl of url[i]) {
+                for (const sourceUrl of url[i]) {
                     const { data } = await axios.get(sourceUrl.url);
                     let $ = cheerio.load(data);
                     try {
