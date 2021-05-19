@@ -79,17 +79,14 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
         return res.render("results/result", resulfOfMatchedElements);
     }
     catch (resulfOfMatchedElements) {
-        if (resulfOfMatchedElements)
+        if (!resulfOfMatchedElements.error)
             return res.render("results/result", resulfOfMatchedElements);
+        if (resulfOfMatchedElements.error && resulfOfMatchedElements.message)
+            req.flash("error", resulfOfMatchedElements.message);
         req.flash("error", "Something went wrong.Please Try Again!");
-        return res.redirect("back");
+        return res.status(500).redirect("back");
     }
 })
 
-router.get("/demo", async (req, res) => {
-    //cx=bf86f70809529d285
-    //api_key=AIzaSyD3fJCcq8cFglnxF7kZTQ5hY46eL5FL8iQ
-    getSource();
-})
 
 module.exports = router;

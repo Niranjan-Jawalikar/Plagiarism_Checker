@@ -34,7 +34,6 @@ const getUrls = (language, comment) => {
         worker.once("message", url => arr[0].push(url))
         let workerCount = 0;
         for (const [index, file] of getAllDirFiles(dirPathUploads).entries()) {
-
             for (fileOfGoogle of getAllDirFiles(dirPathGoogle)) {
                 const worker = new Worker(`${__dirname}/worker.js`, { workerData: { language, comment, upload: { path: `${dirPathUploads}/${file}`, description: `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}` }, google: { path: `${dirPathGoogle}/${fileOfGoogle}`, description: `${fileOfGoogle}` }, index, getGoogleLinks: true } });
                 worker.once("message", ({ url, index, userFileName }) => {
@@ -49,7 +48,7 @@ const getUrls = (language, comment) => {
                     }
                     if (flag && arr[0].length > 0)
                         resolve(arr);
-                    else if (workerCount === googleLength * uploadLength)
+                    else if (workerCount === googleLength * uploadLength || !url)
                         reject(null);
 
                 })

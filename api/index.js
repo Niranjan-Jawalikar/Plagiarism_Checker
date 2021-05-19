@@ -62,9 +62,6 @@ const getSource = async (searchTerm, language) => {
             const page = await browser.newPage();
             let code;
             for (item of data.items) {
-                // const myPage = await axios.get("https://www.geeksforgeeks.org/c-program-to-check-whether-a-number-is-prime-or-not/");
-                // let $ = cheerio.load(myPage.data);
-                // const code = $(".code-container code:not(.comments)").text();
                 await page.goto(item.link);
                 if (item.displayLink === "www.programiz.com") {
                     code = await getText(page, "code.hljs");
@@ -91,7 +88,7 @@ const getSource = async (searchTerm, language) => {
                     fs.writeFileSync(fileName, value, { flag: "w+" });
                     sourceArray.push({ fileName: `${item.cacheId}${index}${getExtensionAndName(language).extension}`, sourceUrl: item.link });
                 }
-                break;
+                // break;
             }
             browser.close();
             resolve(sourceArray);

@@ -1,17 +1,19 @@
 <%- include("../partials/header")%>
-    <div class="container login">
-        <form action="/login" method="POST">
-            <div class="mb-3 form-floating">
-                <input type="text" name="username" class="form-control" id="username" placeholder="abc">
-                <label for="username">Username</label>
-            </div>
-            <div class="mb-3 form-floating">
-                <input type="password" name="password" class="form-control" id="exampleInputPassword1"
-                    placeholder="abc">
-                <label for="exampleInputPassword1">Password</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+    <div class="login">
+        <div class="card">
+            <form action="/login" method="POST">
+                <h2 class="title"> Log In</h2>
+                <p class="subtitle">Don't have an account? <a href="/register"> sign Up</a></p>
+                <div class="email-login">
+                    <label for="username"> <b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="username" id="username" required>
+                    <label for="password"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" id="password" name="password" required>
+                </div>
+                <button class="cta-btn">Log In</button>
+            </form>
+        </div>
     </div>
+
 
     <%- include("../partials/footer")%>

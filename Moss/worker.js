@@ -14,6 +14,8 @@ const getGoogleLinks = async ({ language, comment, google, upload, index }) => {
     }
     catch (e) {
         console.log(e);
+        parentPort.postMessage({ url: null, index: null, userFileName: null });
+        process.exit();
     }
 
 
