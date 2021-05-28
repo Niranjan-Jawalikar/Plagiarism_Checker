@@ -6,14 +6,27 @@ const express = require("express"),
     session = require("express-session"),
     flash = require("connect-flash"),
     bodyParser = require("body-parser"),
-    passport = require("passport");
+    passport = require("passport"),
+    MongoStore = require('connect-mongo');
 
+const dbUrl = process.env.DB_URL || 'mongodb://localhost/Plagiarism_Checker';
 
-mongoose.connect('mongodb://localhost/Plagiarism_Checker', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const secret = process.env.SECRET || "secret";
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 3600,
+    crypto: {
+        secret
+    }
+})
 
 
 app.use(session({
-    secret: "secret",
+    store,
+    secret,
     resave: false,
     saveUninitialized: true
 }))
