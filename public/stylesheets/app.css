@@ -348,7 +348,7 @@ div.alert{
 
 div.spinner{
   width: 100%;
-  height: 100%;
+  height: 120vh;
   position: absolute;
   background-color: rgba(72, 73, 75, 0.548);
   display: flex;
