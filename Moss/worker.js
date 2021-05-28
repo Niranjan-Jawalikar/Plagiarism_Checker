@@ -23,7 +23,7 @@ const getGoogleLinks = async ({ language, comment, google, upload, index }) => {
 
 const getFileLink = async ({ language, comment, files, dirPathUploads }) => {
     try {
-        const client = new MossClient(language, "221511228");
+        const client = new MossClient(language, process.env.MOSS_ID);
         client.setComment(comment);
         for (const file of files)
             client.addFile(`${dirPathUploads}/${file}`, `${file.match(/.+(?=((-\d+\.\w+)$))/g)[0]}${path.extname(file)}`)

@@ -1,5 +1,4 @@
 const axios = require("axios");
-const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
@@ -57,7 +56,7 @@ const getSource = async (searchTerm, language) => {
     return new Promise(async (resolve, reject) => {
         const sourceArray = [];
         try {
-            const { data } = await axios.get(`https://www.googleapis.com/customsearch/v1?key=AIzaSyD3fJCcq8cFglnxF7kZTQ5hY46eL5FL8iQ&cx=bf86f70809529d285&q=${encodeURIComponent(searchTerm)}`);
+            const { data } = await axios.get(`https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_KEY}&q=${encodeURIComponent(searchTerm)}`);
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
             let code;
@@ -82,7 +81,6 @@ const getSource = async (searchTerm, language) => {
                 else if (item.displayLink === "www.javatpoint.com") {
                     code = await getText(page, ".codeblock");
                 }
-                // console.log(code);
                 for (const [index, value] of code.entries()) {
                     const fileName = `${dirPath}/${item.cacheId}${index}${getExtensionAndName(language).extension}`;
                     fs.writeFileSync(fileName, value, { flag: "w+" });

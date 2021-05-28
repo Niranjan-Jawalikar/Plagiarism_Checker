@@ -1,6 +1,6 @@
 const express = require("express"),
     router = express.Router(),
-    getMatchedElements = require("../getMatchedElements"),
+    getMatchedElements = require("../helpers/getMatchedElements"),
     multer = require("multer"),
     upload = require("../Multer"),
     URL = require("../models/url"),
@@ -9,8 +9,8 @@ const express = require("express"),
     getSource = require("../api"),
     path = require("path"),
     dirPathUploads = path.join(__dirname, "..", "uploads"),
-    dirPathGoogle = path.join(__dirname, "..", "google");
-fse = require("fs-extra");
+    dirPathGoogle = path.join(__dirname, "..", "google"),
+    fse = require("fs-extra");
 
 router.get("/", (req, res) => {
     res.render("home");
@@ -64,13 +64,16 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
     if (!foundURLObj.url) {
         try {
             const { searchTerm, language } = foundURLObj;
+            // showSpinner();
             sourceArray = await getSource(searchTerm, language);
         }
         catch (e) {
             console.log(e);
+            // hideSpinner();
             req.flash("error", "Something went wrong.Please Try Again!");
             fse.emptyDirSync(dirPathUploads);
             fse.emptyDirSync(dirPathGoogle);
+            await URL.findByIdAndDelete(req.params.id).exec();
             return res.redirect("back");
         }
     }
@@ -81,12 +84,23 @@ router.get("/result/:id", isLoggedIn, async (req, res) => {
     catch (resulfOfMatchedElements) {
         if (!resulfOfMatchedElements.error)
             return res.render("results/result", resulfOfMatchedElements);
-        if (resulfOfMatchedElements.error && resulfOfMatchedElements.message)
-            req.flash("error", resulfOfMatchedElements.message);
-        req.flash("error", "Something went wrong.Please Try Again!");
-        return res.status(500).redirect("back");
+        else {
+            // hideSpinner();
+            if (resulfOfMatchedElements.error && resulfOfMatchedElements.message)
+                req.flash("error", resulfOfMatchedElements.message);
+            else
+                req.flash("error", "Something went wrong.Please Try Again!");
+            fse.emptyDirSync(dirPathUploads);
+            fse.emptyDirSync(dirPathGoogle);
+            await URL.findByIdAndDelete(req.params.id).exec();
+            return res.status(500).redirect("back");
+        }
+
     }
 })
 
+
+const showSpinner = () => document.querySelector(".spinner-border").style.display = "block";
+const hideSpinner = () => document.querySelector(".spinner-border").style.display = "none";
 
 module.exports = router;

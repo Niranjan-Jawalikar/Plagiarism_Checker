@@ -1,6 +1,6 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { fetchMossUrl } = require("./Moss");
+const { fetchMossUrl } = require("../Moss");
 const puppeteer = require("puppeteer");
 
 const getMatchedPercentage = ($) => {
