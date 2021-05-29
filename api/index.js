@@ -86,7 +86,7 @@ const getSource = async (searchTerm, language) => {
                     fs.writeFileSync(fileName, value, { flag: "w+" });
                     sourceArray.push({ fileName: `${item.cacheId}${index}${getExtensionAndName(language).extension}`, sourceUrl: item.link });
                 }
-                break;
+                // break;
             }
             browser.close();
             resolve(sourceArray);
