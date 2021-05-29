@@ -69,7 +69,7 @@ const getMatchedElements = async (foundURLObj, sourceArray) => {
                 }
             }
             let $ = cheerio.load(response.data);
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             let textArr = [];
             let matchedObjects = [];

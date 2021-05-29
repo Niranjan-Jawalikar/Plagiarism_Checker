@@ -57,7 +57,7 @@ const getSource = async (searchTerm, language) => {
         const sourceArray = [];
         try {
             const { data } = await axios.get(`https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_KEY}&q=${encodeURIComponent(searchTerm)}`);
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             let code;
             for (item of data.items) {
@@ -86,7 +86,7 @@ const getSource = async (searchTerm, language) => {
                     fs.writeFileSync(fileName, value, { flag: "w+" });
                     sourceArray.push({ fileName: `${item.cacheId}${index}${getExtensionAndName(language).extension}`, sourceUrl: item.link });
                 }
-                // break;
+                break;
             }
             browser.close();
             resolve(sourceArray);
